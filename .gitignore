@@ -1,2 +1,7 @@
 .vscode/
 data/
+*__pycache__/
+runs/
+*.pt
+*.png
+*.json
