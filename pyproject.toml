@@ -19,3 +19,11 @@ mypy = "^1.2.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
+
+[tool.mypy]
+follow_imports_silent = true
+show_column_numbers = true
+strict = true
