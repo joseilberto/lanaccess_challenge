@@ -13,6 +13,7 @@ coco-utils = "^0.0.3"
 ultralytics = "^8.0.83"
 pylint = "^2.17.2"
 black = "^23.3.0"
+mypy = "^1.2.0"
 
 
 [build-system]
