@@ -12,6 +12,7 @@ tensorflow = "2.12"
 coco-utils = "^0.0.3"
 ultralytics = "^8.0.83"
 pylint = "^2.17.2"
+black = "^23.3.0"
 
 
 [build-system]
