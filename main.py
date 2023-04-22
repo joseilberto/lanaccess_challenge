@@ -18,15 +18,18 @@ def main() -> None:
 
     # Here we use MSCOCO dataset with person and motorcycle categories only
     # so we fetch the dataset first
-    data_dir = os.path.join(os.getcwd(), "datasets")
+    data_dir = os.path.join(os.getcwd(), "data")
     data_file = get_yolo_data(
-        data_dir, classes=["person", "motorcycle"], sample=False
+        data_dir,
+        classes=["person", "motorcycle"],
+        sample_size=10,
+        skip_creation=True,
     )
 
     # Here we train the model
     model.train(
         data=data_file,
-        epochs=100,
+        epochs=5,
         imgsz=640,
         batch=16,
         patience=5,

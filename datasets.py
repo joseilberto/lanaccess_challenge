@@ -1,86 +1,77 @@
-"Here we prepare a yaml file to download datasets using the ultralytics API"
+"Here we prepare a yaml file to download datasets using fifityone API"
 
 from pathlib import Path
 from typing import Optional
+from requests.exceptions import ConnectionError as ReqConnectionError
 
-import os
-import ultralytics
 import yaml
+import fiftyone as fo
+import fiftyone.zoo as foz
+
+from utils import COCO_CLASSES, convert_coco_json
 
 
 def get_yolo_data(
-    directory: str, classes: Optional[list] = None, sample: bool = False
+    directory: str,
+    classes: Optional[list] = None,
+    sample_size: int = 10000,
+    skip_creation: bool = False,
 ) -> str:
     """
-    This method allows us to download the yolo dataset using either MSCOCO
-    or MSCOCO128 for testing purposes. We use the base yaml files for both
-    coco.yaml and coco128.yaml and modify them accordingly to reduce the number
-    of classes and saving the dataset in the current directory.
+    This method allows us to download the MSCOCO dataset for specific classes
+    We use the fiftyone API to download specific classes for traininig,
+    validation and testing
     """
-    # We define the root file we would like to use
-    coco_type = "coco128" if sample else "coco"
-    coco_file = f"{coco_type}.yaml"
-
-    # If no classes are passed, we use the default coco dataset with 80 classes
     if classes is None:
-        return coco_file
+        raise ValueError(f"Expected a list of classes, got {classes}")
 
-    # Otherwise, we open the default files in the ultralytics repo and change
-    # the names object to contain only the classes we need
-    data_path = Path(directory)
-    data_path.mkdir(parents=True, exist_ok=True)
-    coco_output_file = data_path.joinpath(coco_file)
+    # We create a yaml file to be used by the ultralytics model
+    data_file = write_coco_yaml_ultralytics_file(directory)
+    if skip_creation:
+        return data_file
 
-    coco_yaml = (
-        Path(ultralytics.__path__[0]).joinpath("datasets").joinpath(coco_file)
-    )
-    if coco_yaml.is_file():
-        # pylint: disable=unspecified-encoding
-        with open(str(coco_yaml), "r") as stream:
-            yaml_data = yaml.safe_load(stream)
-
-        # Modifying path related variables
-        yaml_data["path"] = str(data_path)
-        yaml_data["train"] = os.path.join(coco_type, yaml_data["train"])
-        yaml_data["val"] = os.path.join(coco_type, yaml_data["val"])
-
-        # Validating the classes passed by the user
-        validate_coco_classes(classes, yaml_data["names"])
-
-        # Setting the classes in the names entry of yaml_data
-        set_new_names(classes, yaml_data)
-
-        # We save the file and return the string
-        with open(str(coco_output_file), "w") as stream:
-            yaml.dump(
-                yaml_data, stream, default_flow_style=False, allow_unicode=True
+    # Here we download the image and annotations for the MSCOCO dataset for the
+    # classes provided. We may find some connection error due to multiple
+    # requests to the same URL. To guarantee we're going to download the file,
+    # we capture exception and wait until all images are downloaded.
+    while True:
+        try:
+            foz.load_zoo_dataset(
+                "coco-2017",
+                splits=["train", "validation", "test"],
+                label_types=["detections", "segmentations"],
+                classes=classes,
+                max_samples=sample_size,
             )
-        if coco_output_file.is_file():
-            return str(coco_output_file)
-        raise ValueError(f"File {str(coco_output_file)} was not saved")
-    raise ValueError(f"File not found: {str(coco_yaml)}")
+            break
+        except ReqConnectionError:
+            continue
+
+    # We collect the path of the COCO dataset downloaded by fiftyone API
+    coco_dir = Path(fo.config.dataset_zoo_dir) / "coco-2017"
+    data_dir = Path(directory) / "coco-2017"
+
+    for dir_type in ["train", "validation"]:
+        coco_cur_dir = coco_dir / dir_type
+        convert_coco_json(coco_cur_dir, data_dir, use_segments=False)
+    return data_file
 
 
-def set_new_names(classes: list, yaml_data: dict) -> None:
-    """Set the list of classes into the 'names' key of the yaml_data"""
-    cls_count = 0
-    new_names = {}
-    for cls_name in classes:
-        new_names[int(cls_count)] = cls_name
-        cls_count += 1
-    yaml_data["names"] = new_names
-
-
-def validate_coco_classes(classes: list, names: dict) -> None:
+def write_coco_yaml_ultralytics_file(directory: str) -> str:
     """
-    Check if all the new classes are supported by COCO dataset. Otherwise
-    raises an exception.
+    We create the necessary yaml file for the ultralytics to read where
+    MSCOCO files are and what classes we have.
     """
-    yaml_classes = list(names.values())
-    not_present = [
-        cls_name for cls_name in classes if cls_name not in yaml_classes
-    ]
-    if not_present:
-        raise ValueError(
-            f"The classes {not_present} are not present in the COCO dataset"
-        )
+    Path(directory).mkdir(parents=True, exist_ok=True)
+    yaml_data = {
+        "path": str(Path(directory) / "coco-2017"),
+        "train": "images/train",
+        "val": "images/validation",
+        "test": "images/validation",
+        "names": dict(enumerate(COCO_CLASSES)),
+    }
+    yaml_file_path = Path(directory).joinpath("coco_two_classes.yaml")
+    # pylint: disable=unspecified-encoding
+    with open(str(yaml_file_path), "w") as stream:
+        yaml.dump(yaml_data, stream)
+    return str(yaml_file_path)
