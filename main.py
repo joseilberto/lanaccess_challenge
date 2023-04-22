@@ -34,9 +34,16 @@ def main() -> None:
         batch=16,
         patience=5,
         save=True,
-        name="Two classes COCO with untrained YOLOv8N",
-        exist_ok=True,
+        project="Pretrained YOLOv8N two classes",
+        name="test1",
+        exist_ok=False,
+        pretrained=True,
+        optimizer="Adam",
         verbose=True,
+        cos_lr=True,
+        lr0=0.01,
+        lrf=0.0001,
+        dropout=0.2,
     )
 
 
