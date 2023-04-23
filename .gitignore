@@ -2,8 +2,8 @@
 data/
 *__pycache__/
 runs/
-*YOLOv*/
 *.pt
 *.png
 *.json
 *.jpg
+/Pretrained YOLOv8N two classes

@@ -1,0 +1,5 @@
+outs:
+- md5: 730e02dfb91339dd3d7ae704e5ab2ec0.dir
+  size: 18380336
+  nfiles: 20
+  path: Pretrained YOLOv8N two classes
