@@ -108,6 +108,7 @@ COCO_CLASSES = [
 def convert_coco_json(
     coco_json_dir: str,
     output_dir: str,
+    classes: list,
     use_segments: bool = False,
     cls91to80: bool = False,
 ) -> None:
@@ -119,6 +120,13 @@ def convert_coco_json(
     save_dir = make_dirs(output_dir)
     source_images_dir = Path(coco_json_dir) / "data"
     coco80 = coco91_to_coco80_class()
+    coco_dict = {
+        name: idx for idx, name in enumerate(COCO_CLASSES) if name in classes
+    }
+    coco_to_current = {
+        coco_dict[name] - 1: idx for idx, name in enumerate(classes)
+    }
+
     # Import json
     for json_file in sorted(Path(coco_json_dir).resolve().glob("*.json")):
         folder_name = Path(save_dir) / "labels" / json_file.parent.stem
@@ -164,16 +172,21 @@ def convert_coco_json(
                 box[[1, 3]] /= height  # normalize y
                 if box[2] <= 0 or box[3] <= 0:  # if w <= 0 and h <= 0
                     continue
-
+                # Get class
                 cls = (
                     coco80[ann["category_id"] - 1]
                     if cls91to80
                     else ann["category_id"] - 1
-                )  # class
+                )
+                if coco_to_current.get(cls, None) is None:
+                    continue
+                cls = coco_to_current[cls]
+                # Add new bounding box if not in the bboxes list already
                 box = [cls] + box.tolist()
                 if box not in bboxes:
                     bboxes.append(box)
-                # Segments
+
+                # Find segments
                 if use_segments:
                     if len(ann["segmentation"]) > 1:
                         segment = merge_multi_segment(ann["segmentation"])
