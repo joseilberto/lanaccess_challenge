@@ -1,5 +1,6 @@
 .vscode/
-data/
+data/coco-2017
+data/*.yaml
 *__pycache__/
 runs/
 *.pt

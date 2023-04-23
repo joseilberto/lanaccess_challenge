@@ -1,0 +1,5 @@
+outs:
+- md5: 93bac79d87a79a5fcd623fdb1e01f229.dir
+  size: 85302585
+  nfiles: 9
+  path: samples
