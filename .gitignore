@@ -7,4 +7,5 @@ runs/
 *.png
 *.json
 *.jpg
+*.mp4
 /Pretrained YOLOv8N two classes
