@@ -4,9 +4,9 @@ import argparse
 import gc
 import shutil
 import os
+from pathlib import Path
 import torch
 
-from pathlib import Path
 from ultralytics import YOLO
 
 
