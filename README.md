@@ -83,6 +83,19 @@ python detect_objects.py -p "./data/samples/video_sample3.mp4"
 
 Al final de este proceso, obtenemos un video con cada frame etiquetado correctamente.
 
+## Instalación del nvidia-container-toolkit
+
+Para el uso de las tarjetas gráficas, se requiere la instalación de las dependencias de nvidia-container-toolkit. Abajo siguen los pasos para la instalación de las dependencias necesarias.
+
+```console
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+
+sudo apt update && sudo apt install -y nvidia-container-toolkit
+sudo systemctl restart docker
+```
+
 ## Perspectivas y mejoras del proyecto
 
 - Agregar más argumentos a los scripts o crear yaml files para configurar rutas de modelos y datos
