@@ -3135,18 +3135,6 @@ setuptools = "*"
 wheel = "*"
 
 [[package]]
-name = "nvidia-cublas-cu12"
-version = "12.1.3.1"
-description = "CUBLAS native runtime libraries"
-category = "main"
-optional = false
-python-versions = ">=3"
-files = [
-    {file = "nvidia_cublas_cu12-12.1.3.1-py3-none-manylinux1_x86_64.whl", hash = "sha256:ee53ccca76a6fc08fb9701aa95b6ceb242cdaab118c3bb152af4e579af792728"},
-    {file = "nvidia_cublas_cu12-12.1.3.1-py3-none-win_amd64.whl", hash = "sha256:2b964d60e8cf11b5e1073d179d85fa340c120e99b3067558f3cf98dd69d02906"},
-]
-
-[[package]]
 name = "nvidia-cuda-nvrtc-cu11"
 version = "11.7.99"
 description = "NVRTC native runtime libraries"
@@ -3194,20 +3182,6 @@ files = [
 [package.dependencies]
 setuptools = "*"
 wheel = "*"
-
-[[package]]
-name = "nvidia-cudnn-cu12"
-version = "8.9.0.131"
-description = "cuDNN runtime libraries"
-category = "main"
-optional = false
-python-versions = ">=3"
-files = [
-    {file = "nvidia_cudnn_cu12-8.9.0.131-py3-none-manylinux1_x86_64.whl", hash = "sha256:2a95c2e0201187509021270f52971435d171e65627a482b9ebdfdde6749ad485"},
-]
-
-[package.dependencies]
-nvidia-cublas-cu12 = "*"
 
 [[package]]
 name = "oauth2client"
@@ -5914,4 +5888,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "62128f88d3247bc14aa3c230c7323e5d988d95859e52bb5f8694e069f6d5e5ff"
+content-hash = "4015423d263e3efe67e0aff9fd534d0350df5b830cc3720ab06a59df5c5d65bc"
