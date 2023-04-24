@@ -53,6 +53,7 @@ Una alternativa sería agregar algún modelo de regularización o cambiar la fun
 El Dockerfile originalmente se propone copiar la dirección que contiene el archivo a ser etiquetado y la imagen docker posee un entrypoint para ejecutar la detección del archivo directamente. Por ejemplo, se puede ejecutar la imagen docker de la siguiente manera:
 
 ```console
+docker build . -t lanacces
 docker run -v ./data/samples:/build/data/samples --gpus all --rm lanaccess --p="./data/samples/sample1.jpg"
 ```
 
